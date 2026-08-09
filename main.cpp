@@ -8,36 +8,96 @@ class BigInt {
 
     // Remove unnecessary leading zeros from the number string
     void removeLeadingZeros() {
-        // TODO: Implement this function
+    int i = 0;
+
+    while (i < number.length() - 1 && number[i] == '0') {
+        i++;
     }
+
+    number.erase(0, i);
+
+    if (number == "0") {
+        isNegative = false;
+    }
+}
 
     // Compare absolute values of two BigInts (ignore signs)
     // Returns: 1 if |this| > |other|, 0 if equal, -1 if |this| < |other|
     int compareMagnitude(const BigInt& other) const {
-        // TODO: Implement this function
-        return 0;
+
+    // First compare the number of digits
+    if (number.length() > other.number.length()) {
+        return 1;
     }
+
+    if (number.length() < other.number.length()) {
+        return -1;
+    }
+
+    // Same number of digits
+    if (number > other.number) {
+        return 1;
+    }
+
+    if (number < other.number) {
+        return -1;
+    }
+
+    // Both numbers are equal
+    return 0;
+}
 
 public:
     // Default constructor - initialize to zero
-    BigInt() {
-        // TODO: Implement this constructor
-    }
+   BigInt() {
+    number = "0";
+    isNegative = false;
+}
 
     // Constructor from 64-bit integer
     BigInt(int64_t value) {
-        // TODO: Implement this constructor
+
+    if (value < 0) {
+        isNegative = true;
+
+        // Convert number to string
+        number = to_string(value);
+
+        // Remove the '-'
+        number = number.substr(1);
+    }
+    else {
+        isNegative = false;
+        number = to_string(value);
     }
 
+    removeLeadingZeros();
+}
+
     // Constructor from string representation
-    BigInt(const string& str) {
-        // TODO: Implement this constructor
+  BigInt(const string& str) {
+
+    if (str.empty()) {
+        number = "0";
+        isNegative = false;
     }
+    else if (str[0] == '-') {
+        isNegative = true;
+        number = str.substr(1);
+    }
+    else {
+        isNegative = false;
+        number = str;
+    }
+
+    removeLeadingZeros();
+}
 
     // Copy constructor
     BigInt(const BigInt& other) {
-        // TODO: Implement this constructor
-    }
+    number = other.number;
+    isNegative = other.isNegative;
+}
 
     // Destructor
     ~BigInt() {
@@ -46,9 +106,16 @@ public:
 
     // Assignment operator
     BigInt& operator=(const BigInt& other) {
-        // TODO: Implement this operator
+
+    if (this == &other) {
         return *this;
     }
+
+    number = other.number;
+    isNegative = other.isNegative;
+
+    return *this;
+}
 
     // Unary negation operator (-x)
     BigInt operator-() const {
