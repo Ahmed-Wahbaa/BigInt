@@ -1,4 +1,1 @@
-BigInt.cbp
-bin/
-obj/
-*.depend
+.vscode/

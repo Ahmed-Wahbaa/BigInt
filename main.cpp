@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <stdexcept>
 using namespace std;
 
 class BigInt {
@@ -46,6 +47,9 @@ class BigInt {
     // Both numbers are equal
     return 0;
 }
+
+private:
+    BigInt divideByTwo(const BigInt& value) const; // Helper function to divide a BigInt by 2
 
 public:
     // Default constructor - initialize to zero
@@ -151,7 +155,64 @@ public:
 
     // Division assignment operator (x /= y)
     BigInt& operator/=(const BigInt& other) {
-        // TODO: Implement this operator
+        // Check for division by zero
+        if(other.number == "0")
+        {
+            throw runtime_error("Division by zero");
+        }
+        //Magnitude comparison
+        if(this->compareMagnitude(other) < 0)
+        {
+            return *this = BigInt(0);
+        }
+
+        //used in binary search
+        BigInt dividend = *this;
+        BigInt divisor = other;
+
+        //store signs for later
+        bool dividendSign = dividend.isNegative;
+        bool divisorSign = divisor.isNegative;
+
+        //remove signs for division
+        dividend.isNegative = false;
+        divisor.isNegative = false;
+
+        //binary search for quotient
+        BigInt left = BigInt(0);
+        BigInt right = dividend;
+        while(left<=right)
+        {
+            BigInt mid = divideByTwo(left + right);
+            BigInt product = mid * divisor;
+            if(product <= dividend && (mid + BigInt(1)) * divisor > dividend)
+            {
+                *this = mid;
+                break;
+            }
+            else if(product < dividend)
+            {
+                left = mid + BigInt(1);
+            }
+            else
+            {
+                right = mid - BigInt(1);
+            }
+        }
+
+        //sign handling
+        if(dividendSign ^ divisorSign)
+        {
+            this->isNegative = true;
+        }
+        else
+        {
+            this->isNegative = false;
+        }
+
+        // Remove leading zeros from the result
+        this->removeLeadingZeros();
+        
         return *this;
     }
 
@@ -208,7 +269,29 @@ public:
     // Friend declarations for comparison operators
     friend bool operator==(const BigInt& lhs, const BigInt& rhs);
     friend bool operator<(const BigInt& lhs, const BigInt& rhs);
+    
+    // Friend declarations for arithmetic operators
+    friend BigInt operator/(BigInt lhs, const BigInt& rhs);
 };
+
+BigInt BigInt::divideByTwo(const BigInt& value) const
+{
+    string quotient;
+    int remainder = 0;
+
+    for (char c : value.number)
+    {
+        int current = remainder * 10 + (c - '0');
+        int quotientDigit = current / 2;
+        remainder = current % 2;
+        quotient += char(quotientDigit + '0');
+    }
+
+    BigInt result(quotient);
+    result.removeLeadingZeros();
+
+    return result;
+}
 
 // Binary addition operator (x + y)
 BigInt operator+(BigInt lhs, const BigInt& rhs) {
@@ -233,8 +316,7 @@ BigInt operator*(BigInt lhs, const BigInt& rhs) {
 
 // Binary division operator (x / y)
 BigInt operator/(BigInt lhs, const BigInt& rhs) {
-    BigInt result;
-    // TODO: Implement this operator
+    BigInt result = lhs /= rhs; // from the division assignment operator
     return result;
 }
 
