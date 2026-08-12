@@ -137,13 +137,96 @@ public:
 
     // Addition assignment operator (x += y)
     BigInt& operator+=(const BigInt& other) {
-        // TODO: Implement this operator
+        string result = "";
+        //Add magnitudes if both have same signs using carry logic
+        if (this->isNegative == other.isNegative) {
+            int carry = 0, sum = 0;
+            int i = this -> number.length() - 1;
+            int j = other.number.length() - 1;
+            //This while loop condition makes sure that you iterate through all numbers and if there are carries to be added to final result
+            while (i >= 0 || j >= 0 || carry > 0) {
+                int sum = carry;
+                
+                //Make sure we aren't going out of bounds from both numbers by using these 2 if conditions at first
+                if (i >= 0) {
+                    sum += this->number[i] - '0';
+                    i--;
+                }
+                
+                if (j >= 0) {
+                    sum += other.number[j] - '0';
+                    j--;
+                }
+                
+                carry = sum / 10;
+                result = char((sum % 10) + '0') + result;
+            }
+            this -> number = result;
+        } 
+        //If adding different sign numbers do subtraction instead using borrow logic
+        else {
+            int comparison = this -> compareMagnitude(other);
+            int borrow = 0, diff = 0;
+            //If numbers are equal in magnitude
+            if(comparison == 0){
+                this -> number = "0";
+                this -> isNegative = 0;
+                return *this;
+            }
+
+            string topString, bottomString;
+            //If this numbers is greater than other
+            if(comparison == 1){
+                topString = this -> number;
+                bottomString = other.number;
+            }
+            //If other number is greater than this
+            else{
+                this -> isNegative = other.isNegative;
+                topString = other.number;
+                bottomString = this -> number;
+            }
+
+            int t = topString.length() - 1;
+            int b = bottomString.length() - 1;
+
+            while(t >= 0){
+                diff = (topString[t] - '0') - borrow;
+                //Making sure with this if condtion that we aren't going out of bounds
+                if(b >= 0){
+                    diff -= (bottomString[b] - '0');
+                    b--;
+                }
+
+                if(diff < 0){
+                    diff += 10;
+                    borrow = 1;
+                }
+                else{
+                    borrow = 0;
+                }
+                //Not += here so that it appends from the front
+                result = char(diff + '0') + result;
+                t--;
+            }
+            
+            this -> number = result;
+        }
+
+        this -> removeLeadingZeros();
         return *this;
     }
 
     // Subtraction assignment operator (x -= y)
     BigInt& operator-=(const BigInt& other) {
-        // TODO: Implement this operator
+        //Making temporary copy of the number
+        BigInt temp = other;
+        //Then flip the number's sign if it isn't zero so we can add instead of subtract
+        if(temp.number != "0"){
+            temp.isNegative = !temp.isNegative;
+        }
+        //If the if condition was skipped the magnitudes will be added as normal while retaining signs 
+        *this += temp;
         return *this;
     }
 
@@ -295,15 +378,15 @@ BigInt BigInt::divideByTwo(const BigInt& value) const
 
 // Binary addition operator (x + y)
 BigInt operator+(BigInt lhs, const BigInt& rhs) {
-    BigInt result;
-    // TODO: Implement this operator
+    BigInt result = lhs;
+    result += rhs;
     return result;
 }
 
 // Binary subtraction operator (x - y)
 BigInt operator-(BigInt lhs, const BigInt& rhs) {
-    BigInt result;
-    // TODO: Implement this operator
+    BigInt result = lhs;
+    result -= rhs;
     return result;
 }
 
