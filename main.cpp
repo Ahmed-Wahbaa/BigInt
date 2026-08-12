@@ -212,7 +212,7 @@ public:
 
         // Remove leading zeros from the result
         this->removeLeadingZeros();
-        
+
         return *this;
     }
 
@@ -223,30 +223,29 @@ public:
     }
 
     // Pre-increment operator (++x)
-    BigInt& operator++() {
-        // TODO: Implement this operator
-        return *this;
-    }
+BigInt& operator++() {
+    *this += BigInt(1);
+    return *this;
+}
 
     // Post-increment operator (x++)
-    BigInt operator++(int) {
-        BigInt temp;
-        // TODO: Implement this operator
-        return temp;
-    }
-
+BigInt operator++(int) {
+    BigInt temp = *this;
+    *this += BigInt(1);
+    return temp;
+}
     // Pre-decrement operator (--x)
-    BigInt& operator--() {
-        // TODO: Implement this operator
-        return *this;
-    }
+BigInt& operator--() {
+    *this -= BigInt(1);
+    return *this;
+}
 
     // Post-decrement operator (x--)
-    BigInt operator--(int) {
-        BigInt temp;
-        // TODO: Implement this operator
-        return temp;
-    }
+BigInt operator--(int) {
+    BigInt temp = *this;
+    *this -= BigInt(1);
+    return temp;
+}
 
     // Convert BigInt to string representation
     string toString() const {
@@ -269,7 +268,7 @@ public:
     // Friend declarations for comparison operators
     friend bool operator==(const BigInt& lhs, const BigInt& rhs);
     friend bool operator<(const BigInt& lhs, const BigInt& rhs);
-    
+
     // Friend declarations for arithmetic operators
     friend BigInt operator/(BigInt lhs, const BigInt& rhs);
 };
@@ -329,38 +328,49 @@ BigInt operator%(BigInt lhs, const BigInt& rhs) {
 
 // Equality comparison operator (x == y)
 bool operator==(const BigInt& lhs, const BigInt& rhs) {
-    // TODO: Implement this operator
+    if (lhs.number == rhs.number &&
+        lhs.isNegative == rhs.isNegative) {
+        return true;
+    }
+
     return false;
 }
 
 // Inequality comparison operator (x != y)
 bool operator!=(const BigInt& lhs, const BigInt& rhs) {
-    // TODO: Implement this operator
-    return false;
+    return !(lhs == rhs);
 }
 
 // Less-than comparison operator (x < y)
 bool operator<(const BigInt& lhs, const BigInt& rhs) {
-    // TODO: Implement this operator
-    return false;
+
+    // If signs are different
+    if (lhs.isNegative != rhs.isNegative) {
+        return lhs.isNegative;
+    }
+
+    // Both numbers are positive
+    if (!lhs.isNegative) {
+        return lhs.compareMagnitude(rhs) < 0;
+    }
+
+    // Both numbers are negative
+    return lhs.compareMagnitude(rhs) > 0;
 }
 
 // Less-than-or-equal comparison operator (x <= y)
 bool operator<=(const BigInt& lhs, const BigInt& rhs) {
-    // TODO: Implement this operator
-    return false;
+    return (lhs < rhs) || (lhs == rhs);
 }
 
 // Greater-than comparison operator (x > y)
 bool operator>(const BigInt& lhs, const BigInt& rhs) {
-    // TODO: Implement this operator
-    return false;
+    return !(lhs <= rhs);
 }
 
 // Greater-than-or-equal comparison operator (x >= y)
 bool operator>=(const BigInt& lhs, const BigInt& rhs) {
-    // TODO: Implement this operator
-    return false;
+    return !(lhs < rhs);
 }
 
 int main() {
