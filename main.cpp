@@ -332,19 +332,24 @@ BigInt operator--(int) {
 
     // Convert BigInt to string representation
     string toString() const {
-        // TODO: Implement this function
-        return "";
+        if(isNegative && number != "0"){
+            return"-"+number;
+        }
+        return number;
     }
 
     // Output stream operator (for printing)
     friend ostream& operator<<(ostream& os, const BigInt& num) {
-        // TODO: Implement this operator
+        os<<num.toString();
         return os;
     }
 
     // Input stream operator (for reading from input)
     friend istream& operator>>(istream& is, BigInt& num) {
-        // TODO: Implement this operator
+        string token;
+        if(is>>token){
+            num = BigInt(token);
+        }
         return is;
     }
 
