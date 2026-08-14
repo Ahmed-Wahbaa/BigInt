@@ -230,9 +230,51 @@ public:
         return *this;
     }
 
+
     // Multiplication assignment operator (x *= y)
     BigInt& operator*=(const BigInt& other) {
-        // TODO: Implement this operator
+
+        //check if either number is zero
+        if (number == "0" || other.number == "0")
+        {
+            number = "0";
+            isNegative = false;
+            return *this;
+        }
+
+        //create a vector to store result of multiplication in it 
+        vector<int>result(number.length() + other.number.length(), 0);
+
+        for (int i = other.number.length() - 1; i >= 0; i--) {
+
+            for (int j = number.length() - 1; j >= 0; j--) {
+
+                int p1 = i + j + 1;  // position of current digit in vector
+                int p2 = i + j;     //position of carry in vector 
+
+                int product = (number[j] - '0') * (other.number[i] - '0');    //multiply current digits
+                int sum = product + result[p1];   //add any value already exists in result[p1] 
+                
+                result[p1] = sum % 10; //store current digit
+                result[p2] += sum / 10; //add carry to previous position 
+            }
+        }
+        //convert vector to string
+
+        number = ""; //to update number by the result of multiplication
+        for (int digit : result) {
+            number += digit + '0'; //convert integer numbers inside the vector to characters and add it to the string number
+        }
+        removeLeadingZeros(); 
+
+        if (isNegative == other.isNegative)
+        {
+            isNegative = false;
+        }
+        else
+        {
+            isNegative = true;
+        }
         return *this;
     }
 
@@ -391,8 +433,8 @@ BigInt operator-(BigInt lhs, const BigInt& rhs) {
 
 // Binary multiplication operator (x * y)
 BigInt operator*(BigInt lhs, const BigInt& rhs) {
-    BigInt result;
-    // TODO: Implement this operator
+    BigInt result = lhs;
+    result *= rhs;
     return result;
 }
 
