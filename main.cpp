@@ -126,14 +126,24 @@ public:
     // Unary negation operator (-x)
     BigInt operator-() const {
         BigInt result;
-        // TODO: Implement negation logic
+        if(number == "0")
+        {
+            result.number = "0";
+            result.isNegative = false;
+        }
+        else
+        {
+            result.number = number;
+            result.isNegative = !isNegative;
+        }
         return result;
     }
 
     // Unary plus operator (+x)
     BigInt operator+() const {
         BigInt result;
-        // TODO: Implement this operator
+        result.number = number;
+        result.isNegative = isNegative;
         return result;
     }
 
@@ -345,7 +355,31 @@ public:
 
     // Modulus assignment operator (x %= y)
     BigInt& operator%=(const BigInt& other) {
-        // TODO: Implement this operator
+        // Check for division by zero
+        if(other.number == "0")
+        {
+            throw runtime_error("Division by zero");
+        }
+        //Magnitude comparison
+        if(this->compareMagnitude(other) < 0)
+        {
+            return *this;
+        }
+        //modulus
+        BigInt quotient = *this / other;
+        *this -= quotient * other;
+        // Remove leading zeros from the result
+        this->removeLeadingZeros();
+
+        //sign handling
+        if(this->number == "0")
+        {
+            this->isNegative = false;
+        }
+        else
+        {
+            this->isNegative = this->isNegative;
+        }
         return *this;
     }
 
@@ -402,6 +436,16 @@ BigInt operator--(int) {
     friend bool operator<(const BigInt& lhs, const BigInt& rhs);
 
     // Friend declarations for arithmetic operators
+    friend BigInt operator+(BigInt lhs, const BigInt& rhs);
+    friend BigInt operator-(BigInt lhs, const BigInt& rhs);
+    friend BigInt operator*(BigInt lhs, const BigInt& rhs);
+    friend BigInt operator/(BigInt lhs, const BigInt& rhs);
+
+    friend bool operator==(const BigInt& lhs, const BigInt& rhs);
+    friend bool operator<(const BigInt& lhs, const BigInt& rhs);
+    friend bool operator<=(const BigInt& lhs, const BigInt& rhs);
+    friend bool operator>(const BigInt& lhs, const BigInt& rhs);
+    friend bool operator>=(const BigInt& lhs, const BigInt& rhs);
     friend BigInt operator/(BigInt lhs, const BigInt& rhs);
 };
 
@@ -454,7 +498,7 @@ BigInt operator/(BigInt lhs, const BigInt& rhs) {
 // Binary modulus operator (x % y)
 BigInt operator%(BigInt lhs, const BigInt& rhs) {
     BigInt result;
-    // TODO: Implement this operator
+    result = lhs %= rhs; // from the modulus assignment operator
     return result;
 }
 
@@ -511,7 +555,7 @@ int main() {
     cout << "Your task is to implement ALL the functions above." << endl;
     cout << "The tests below will work once you implement them correctly." << endl << endl;
 
-    /*
+    
     // Test 1: Constructors and basic output
     cout << "1. Constructors and output:" << endl;
     BigInt a(12345);              // Should create BigInt from integer
@@ -567,7 +611,7 @@ int main() {
     cout << "Negative multiplication: " << BigInt(-5) * BigInt(3) << endl;  // Should be "-15"
     cout << "Negative division: " << BigInt(-10) / BigInt(3) << endl;       // Should be "-3"
     cout << "Negative modulus: " << BigInt(-10) % BigInt(3) << endl;        // Should be "-1"
-    */
+    
 
     return 0;
 }
