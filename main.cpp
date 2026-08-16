@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <stdexcept>
+#include <vector>
+#include <cstdint>
 using namespace std;
 
 class BigInt {
